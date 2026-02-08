@@ -4,11 +4,12 @@
   // ============ CONSTANTS ============
   const STORAGE_KEY = 'trainCalendarData';
   const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
+  const TICKET_PERSON_ID = 3; // 이 사람(주황)만 기차표 아이콘 자동 표시
   const DEFAULT_PEOPLE = [
     { id: 0, name: '사람 1', color: '#4A90D9' },
     { id: 1, name: '사람 2', color: '#E85D75' },
     { id: 2, name: '사람 3', color: '#2ECC71' },
-    { id: 3, name: '사람 4', color: '#F39C12' },
+    { id: 3, name: '기차표', color: '#F39C12' },
   ];
   const MAX_PILLS_VISIBLE = 3;
 
@@ -39,7 +40,6 @@
     personSelector: document.getElementById('person-selector'),
     startTime: document.getElementById('start-time'),
     endTime: document.getElementById('end-time'),
-    ticketToggle: document.getElementById('ticket-toggle'),
     description: document.getElementById('description'),
     btnDelete: document.getElementById('btn-delete'),
     btnModalClose: document.getElementById('btn-modal-close'),
@@ -210,12 +210,16 @@
       pill.dataset.scheduleId = schedule.id;
 
       let html = '';
-      if (schedule.hasTicket) {
+      // 기차표(주황) 사람만 자동으로 🎫 아이콘 표시
+      if (schedule.personId === TICKET_PERSON_ID) {
         html += '<span class="pill-ticket">🎫</span>';
       }
       const person = state.people[schedule.personId];
       html += `<span class="pill-name">${person.name}</span>`;
       html += `<span class="pill-time">${formatTime(schedule.startTime)}~${formatTime(schedule.endTime)}</span>`;
+      if (schedule.description) {
+        html += `<span class="pill-memo">${schedule.description}</span>`;
+      }
 
       pill.innerHTML = html;
       pill.addEventListener('click', (e) => {
@@ -303,7 +307,6 @@
       }
       dom.startTime.value = schedule.startTime;
       dom.endTime.value = schedule.endTime;
-      dom.ticketToggle.checked = schedule.hasTicket;
       dom.description.value = schedule.description || '';
 
       dom.scheduleModal.classList.remove('hidden');
@@ -412,7 +415,7 @@
               <div class="day-item-name">${person.name}</div>
               <div class="day-item-time">${formatTime(schedule.startTime)} ~ ${formatTime(schedule.endTime)}${schedule.description ? ' · ' + schedule.description : ''}</div>
             </div>
-            ${schedule.hasTicket ? '<span class="day-item-ticket">🎫</span>' : ''}
+            ${schedule.personId === TICKET_PERSON_ID ? '<span class="day-item-ticket">🎫</span>' : ''}
           `;
           item.addEventListener('click', () => {
             this.close();
@@ -470,12 +473,13 @@
         return;
       }
 
+      const personId = parseInt(selectedPerson.value, 10);
       const formData = {
-        personId: parseInt(selectedPerson.value, 10),
+        personId: personId,
         date: state.selectedDate,
         startTime: dom.startTime.value,
         endTime: dom.endTime.value,
-        hasTicket: dom.ticketToggle.checked,
+        hasTicket: personId === TICKET_PERSON_ID,
         description: dom.description.value.trim(),
       };
 

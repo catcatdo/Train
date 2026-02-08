@@ -373,6 +373,14 @@ input {
   opacity: 0.9;
 }
 
+.pill-memo {
+  font-size: 0.58rem;
+  opacity: 0.85;
+  margin-left: 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .pill-more {
   display: flex;
   align-items: center;
