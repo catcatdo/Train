@@ -1,6 +1,11 @@
 (function () {
   'use strict';
 
+  // ============ SUPABASE ============
+  const SUPABASE_URL = 'https://soweyuqsbidayabfvvbz.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_l3GcoeZQg1a5Qq_3dZubmw_1gHekVnc';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
   // ============ CONSTANTS ============
   const STORAGE_KEY = 'trainCalendarData';
   const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
@@ -61,9 +66,10 @@
     btnDayAdd: document.getElementById('btn-day-add'),
   };
 
-  // ============ STORAGE ============
+  // ============ STORAGE (Supabase + localStorage fallback) ============
   const Storage = {
-    load() {
+    // localStorage fallback
+    loadLocal() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) return null;
@@ -72,12 +78,113 @@
         return null;
       }
     },
-    save() {
-      const data = {
-        schedules: state.schedules,
-        people: state.people,
-      };
+    saveLocal() {
+      const data = { schedules: state.schedules, people: state.people };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    },
+
+    // Supabase: 일정 전체 로드
+    async loadFromDB() {
+      try {
+        const { data: schedules, error: sErr } = await supabase
+          .from('schedules')
+          .select('*')
+          .order('date', { ascending: true });
+        if (sErr) throw sErr;
+
+        const { data: people, error: pErr } = await supabase
+          .from('people')
+          .select('*')
+          .order('id', { ascending: true });
+        if (pErr) throw pErr;
+
+        if (schedules) {
+          state.schedules = schedules.map((s) => ({
+            id: s.id,
+            personId: s.person_id,
+            date: s.date,
+            startTime: s.start_time,
+            endTime: s.end_time,
+            hasTicket: s.has_ticket,
+            description: s.description || '',
+          }));
+        }
+        if (people && people.length === 4) {
+          state.people = people.map((p) => ({
+            id: p.id,
+            name: p.name,
+            color: p.color,
+          }));
+        }
+        this.saveLocal(); // 로컬에도 캐시
+        return true;
+      } catch (err) {
+        console.warn('Supabase 로드 실패, localStorage 사용:', err);
+        return false;
+      }
+    },
+
+    // Supabase: 일정 추가
+    async addSchedule(schedule) {
+      this.saveLocal();
+      try {
+        const { error } = await supabase.from('schedules').insert({
+          id: schedule.id,
+          person_id: schedule.personId,
+          date: schedule.date,
+          start_time: schedule.startTime,
+          end_time: schedule.endTime,
+          has_ticket: schedule.hasTicket,
+          description: schedule.description,
+        });
+        if (error) throw error;
+      } catch (err) {
+        console.warn('Supabase 저장 실패:', err);
+      }
+    },
+
+    // Supabase: 일정 수정
+    async updateSchedule(id, data) {
+      this.saveLocal();
+      try {
+        const updateData = {};
+        if (data.personId !== undefined) updateData.person_id = data.personId;
+        if (data.date !== undefined) updateData.date = data.date;
+        if (data.startTime !== undefined) updateData.start_time = data.startTime;
+        if (data.endTime !== undefined) updateData.end_time = data.endTime;
+        if (data.hasTicket !== undefined) updateData.has_ticket = data.hasTicket;
+        if (data.description !== undefined) updateData.description = data.description;
+        const { error } = await supabase.from('schedules').update(updateData).eq('id', id);
+        if (error) throw error;
+      } catch (err) {
+        console.warn('Supabase 수정 실패:', err);
+      }
+    },
+
+    // Supabase: 일정 삭제
+    async removeSchedule(id) {
+      this.saveLocal();
+      try {
+        const { error } = await supabase.from('schedules').delete().eq('id', id);
+        if (error) throw error;
+      } catch (err) {
+        console.warn('Supabase 삭제 실패:', err);
+      }
+    },
+
+    // Supabase: 사람 이름 저장
+    async savePeople() {
+      this.saveLocal();
+      try {
+        for (const person of state.people) {
+          const { error } = await supabase
+            .from('people')
+            .upsert({ id: person.id, name: person.name, color: person.color });
+          if (error) throw error;
+        }
+      } catch (err) {
+        console.warn('Supabase 사람 저장 실패:', err);
+      }
     },
   };
 
@@ -477,7 +584,7 @@
         description: data.description || '',
       };
       state.schedules.push(schedule);
-      Storage.save();
+      Storage.addSchedule(schedule);
       Calendar.render();
     },
 
@@ -485,13 +592,13 @@
       const index = state.schedules.findIndex((s) => s.id === id);
       if (index === -1) return;
       state.schedules[index] = { ...state.schedules[index], ...data };
-      Storage.save();
+      Storage.updateSchedule(id, data);
       Calendar.render();
     },
 
     remove(id) {
       state.schedules = state.schedules.filter((s) => s.id !== id);
-      Storage.save();
+      Storage.removeSchedule(id);
       Calendar.render();
     },
   };
@@ -525,7 +632,7 @@
         const name = input.value.trim() || `사람 ${id + 1}`;
         state.people[id].name = name;
       });
-      Storage.save();
+      Storage.savePeople();
       renderPersonLegend();
       Calendar.render();
       this.close();
@@ -724,8 +831,9 @@
   }
 
   // ============ INIT ============
-  function init() {
-    const saved = Storage.load();
+  async function init() {
+    // 먼저 localStorage에서 빠르게 로드 (즉시 표시)
+    const saved = Storage.loadLocal();
     if (saved) {
       state.schedules = saved.schedules || [];
       if (saved.people && saved.people.length === 4) {
@@ -740,6 +848,13 @@
     renderPersonLegend();
     Calendar.render();
     bindEvents();
+
+    // 백그라운드에서 Supabase 동기화
+    const dbLoaded = await Storage.loadFromDB();
+    if (dbLoaded) {
+      renderPersonLegend();
+      Calendar.render();
+    }
   }
 
   document.addEventListener('DOMContentLoaded', init);
