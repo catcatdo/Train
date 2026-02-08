@@ -758,12 +758,12 @@
       };
 
       if (!formData.startTime || !formData.endTime) {
-        alert('승차 시간과 하차 시간을 입력해주세요.');
+        alert('시작 시간과 끝 시간을 입력해주세요.');
         return;
       }
 
       if (formData.startTime >= formData.endTime) {
-        alert('하차 시간은 승차 시간 이후여야 합니다.');
+        alert('끝 시간은 시작 시간 이후여야 합니다.');
         return;
       }
 

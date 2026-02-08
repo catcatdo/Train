@@ -105,7 +105,7 @@ input {
 }
 
 .app-title {
-  font-size: 1.25rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: var(--text-primary);
   display: flex;
@@ -134,7 +134,7 @@ input {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   font-weight: 500;
   color: var(--text-secondary);
   cursor: pointer;
@@ -148,8 +148,8 @@ input {
 }
 
 .legend-dot {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -181,9 +181,9 @@ input {
 }
 
 .month-title {
-  font-size: 1.35rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  min-width: 160px;
+  min-width: 180px;
   text-align: center;
   letter-spacing: -0.02em;
 }
@@ -210,8 +210,8 @@ input {
 }
 
 .btn-today {
-  padding: 6px 16px;
-  font-size: 0.8rem;
+  padding: 7px 18px;
+  font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-secondary);
   border: 1.5px solid var(--border-color);
@@ -235,8 +235,8 @@ input {
 }
 
 .view-btn {
-  padding: 5px 14px;
-  font-size: 0.78rem;
+  padding: 6px 16px;
+  font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-secondary);
   border-radius: var(--radius-full);
@@ -271,7 +271,7 @@ input {
 
 .weekday {
   text-align: center;
-  font-size: 0.78rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-muted);
   padding: 8px 0;
@@ -331,9 +331,9 @@ input {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
-  font-size: 0.8rem;
+  width: 28px;
+  height: 28px;
+  font-size: 0.9rem;
   font-weight: 500;
   color: var(--text-primary);
   border-radius: 50%;
@@ -372,9 +372,9 @@ input {
   flex-wrap: wrap;
   align-items: center;
   gap: 3px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.68rem;
+  padding: 3px 7px;
+  border-radius: 5px;
+  font-size: 0.8rem;
   font-weight: 500;
   color: #fff;
   cursor: pointer;
@@ -395,18 +395,18 @@ input {
 .schedule-pill.person-3 { background: var(--color-person-3); }
 
 .pill-ticket {
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   flex-shrink: 0;
 }
 
 .pill-time {
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   opacity: 0.9;
 }
 
 .pill-memo {
   display: block;
-  font-size: 0.58rem;
+  font-size: 0.7rem;
   opacity: 0.85;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -417,9 +417,9 @@ input {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.65rem;
+  padding: 3px 7px;
+  border-radius: 5px;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--text-secondary);
   background: var(--bg-hover);
@@ -490,7 +490,7 @@ input {
 }
 
 .modal-header h3 {
-  font-size: 1.15rem;
+  font-size: 1.3rem;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
@@ -524,7 +524,7 @@ input {
 
 .form-label {
   display: block;
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: var(--text-secondary);
   margin-bottom: 6px;
@@ -535,7 +535,7 @@ input {
 }
 
 .date-display {
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: var(--text-primary);
   padding: 8px 0;
@@ -543,8 +543,8 @@ input {
 
 .form-input {
   width: 100%;
-  padding: 10px 14px;
-  font-size: 0.9rem;
+  padding: 12px 14px;
+  font-size: 1rem;
   border: 1.5px solid var(--border-color);
   border-radius: var(--radius-md);
   background: var(--bg-white);
@@ -607,7 +607,7 @@ input {
 }
 
 .person-chip .chip-name {
-  font-size: 0.72rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-primary);
   max-width: 100%;
@@ -686,8 +686,8 @@ input {
 }
 
 .btn {
-  padding: 10px 20px;
-  font-size: 0.85rem;
+  padding: 12px 24px;
+  font-size: 1rem;
   font-weight: 600;
   border-radius: var(--radius-md);
   transition: var(--transition);
@@ -788,17 +788,17 @@ input {
 }
 
 .day-item-name {
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 600;
 }
 
 .day-item-time {
-  font-size: 0.78rem;
+  font-size: 0.9rem;
   color: var(--text-secondary);
 }
 
 .day-item-ticket {
-  font-size: 1rem;
+  font-size: 1.1rem;
 }
 
 /* ============ WEEK VIEW ============ */
@@ -808,7 +808,36 @@ input {
 }
 
 .calendar-cell.week-cell {
-  min-height: 220px;
+  min-height: 280px;
+  padding: 8px;
+}
+
+.week-cell .schedule-list {
+  gap: 4px;
+}
+
+.week-cell .schedule-pill {
+  padding: 5px 8px;
+  font-size: 0.82rem;
+  border-radius: 6px;
+  gap: 4px;
+}
+
+.week-cell .pill-ticket {
+  font-size: 0.8rem;
+}
+
+.week-cell .pill-name {
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.week-cell .pill-time {
+  font-size: 0.78rem;
+}
+
+.week-cell .pill-memo {
+  font-size: 0.75rem;
 }
 
 /* ============ DAY VIEW ============ */
@@ -849,21 +878,21 @@ input {
 }
 
 .day-row-name {
-  font-size: 0.9rem;
+  font-size: 1.05rem;
   font-weight: 600;
 }
 
 .day-row-ticket {
-  font-size: 0.95rem;
+  font-size: 1.1rem;
 }
 
 .day-row-time {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   color: var(--text-secondary);
 }
 
 .day-row-memo {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: var(--text-muted);
   margin-top: 4px;
 }
@@ -939,7 +968,7 @@ input {
   }
 
   .legend-item {
-    font-size: 0.72rem;
+    font-size: 0.82rem;
     padding: 3px 6px;
     gap: 4px;
   }
@@ -973,8 +1002,8 @@ input {
   }
 
   .month-title {
-    font-size: 1rem;
-    min-width: 110px;
+    font-size: 1.15rem;
+    min-width: 120px;
   }
 
   .view-switcher {
@@ -982,23 +1011,23 @@ input {
   }
 
   .date-number {
-    width: 20px;
-    height: 20px;
-    font-size: 0.7rem;
+    width: 22px;
+    height: 22px;
+    font-size: 0.78rem;
   }
 
   .schedule-pill {
-    font-size: 0.58rem;
-    padding: 1px 4px;
+    font-size: 0.68rem;
+    padding: 2px 5px;
     gap: 2px;
   }
 
   .pill-time {
-    font-size: 0.55rem;
+    font-size: 0.65rem;
   }
 
   .pill-memo {
-    font-size: 0.5rem;
+    font-size: 0.6rem;
   }
 
   .person-selector {
@@ -1017,27 +1046,27 @@ input {
 
 @media (max-width: 480px) {
   .app-title {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 
   .date-number {
-    width: 18px;
-    height: 18px;
-    font-size: 0.65rem;
+    width: 20px;
+    height: 20px;
+    font-size: 0.72rem;
   }
 
   .schedule-pill {
-    font-size: 0.52rem;
-    padding: 1px 3px;
-    border-radius: 3px;
+    font-size: 0.62rem;
+    padding: 2px 4px;
+    border-radius: 4px;
   }
 
   .pill-ticket {
-    font-size: 0.5rem;
+    font-size: 0.58rem;
   }
 
   .weekday {
-    font-size: 0.68rem;
+    font-size: 0.78rem;
   }
 
   .form-row {
