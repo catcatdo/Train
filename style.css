@@ -223,6 +223,34 @@ input {
   border-color: var(--text-primary);
 }
 
+/* View Switcher */
+.view-switcher {
+  display: flex;
+  background: var(--bg-hover);
+  border-radius: var(--radius-full);
+  padding: 3px;
+  margin-left: 12px;
+}
+
+.view-btn {
+  padding: 5px 14px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-radius: var(--radius-full);
+  transition: var(--transition);
+}
+
+.view-btn:hover {
+  color: var(--text-primary);
+}
+
+.view-btn.active {
+  background: var(--bg-white);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
 /* ============ CALENDAR GRID ============ */
 
 .calendar-container {
@@ -767,6 +795,97 @@ input {
 
 .day-item-ticket {
   font-size: 1rem;
+}
+
+/* ============ WEEK VIEW ============ */
+
+.calendar-grid.week-view {
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-cell.week-cell {
+  min-height: 220px;
+}
+
+/* ============ DAY VIEW ============ */
+
+.calendar-grid.day-view {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.day-row {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--border-light);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.day-row:hover {
+  background: var(--bg-hover);
+}
+
+.day-row-color {
+  width: 5px;
+  flex-shrink: 0;
+}
+
+.day-row-content {
+  flex: 1;
+  padding: 14px 18px;
+}
+
+.day-row-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.day-row-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.day-row-ticket {
+  font-size: 0.95rem;
+}
+
+.day-row-time {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.day-row-memo {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.day-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+  gap: 16px;
+}
+
+.day-empty p {
+  font-size: 0.95rem;
+}
+
+.day-add-row {
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+}
+
+.day-add-btn {
+  padding: 8px 24px;
 }
 
 /* ============ UTILITY ============ */

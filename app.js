@@ -17,6 +17,9 @@
   const state = {
     currentYear: new Date().getFullYear(),
     currentMonth: new Date().getMonth(),
+    currentWeekStart: null, // 주간뷰용
+    currentDay: null, // 일간뷰용
+    viewMode: 'month', // 'month' | 'week' | 'day'
     schedules: [],
     people: JSON.parse(JSON.stringify(DEFAULT_PEOPLE)),
     editingScheduleId: null,
@@ -102,12 +105,64 @@
     return timeStr; // HH:MM format is fine
   }
 
+  // ============ UTILS (view) ============
+  function getWeekStart(date) {
+    const d = new Date(date);
+    const day = d.getDay();
+    d.setDate(d.getDate() - day);
+    return d;
+  }
+
+  function addDays(date, n) {
+    const d = new Date(date);
+    d.setDate(d.getDate() + n);
+    return d;
+  }
+
+  function updateViewButtons() {
+    document.querySelectorAll('.view-btn').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.view === state.viewMode);
+    });
+  }
+
+  function updateTitle() {
+    if (state.viewMode === 'month') {
+      dom.currentMonth.textContent = `${state.currentYear}년 ${state.currentMonth + 1}월`;
+    } else if (state.viewMode === 'week') {
+      const ws = state.currentWeekStart;
+      const we = addDays(ws, 6);
+      const sm = ws.getMonth() + 1;
+      const sd = ws.getDate();
+      const em = we.getMonth() + 1;
+      const ed = we.getDate();
+      if (sm === em) {
+        dom.currentMonth.textContent = `${ws.getFullYear()}년 ${sm}월 ${sd}일 ~ ${ed}일`;
+      } else {
+        dom.currentMonth.textContent = `${ws.getFullYear()}년 ${sm}월 ${sd}일 ~ ${em}월 ${ed}일`;
+      }
+    } else {
+      const d = state.currentDay;
+      dom.currentMonth.textContent = `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일 (${WEEKDAYS[d.getDay()]})`;
+    }
+  }
+
   // ============ CALENDAR RENDERING ============
   const Calendar = {
     render() {
-      const { currentYear, currentMonth } = state;
-      dom.currentMonth.textContent = `${currentYear}년 ${currentMonth + 1}월`;
+      updateTitle();
+      updateViewButtons();
 
+      if (state.viewMode === 'month') {
+        this.renderMonth();
+      } else if (state.viewMode === 'week') {
+        this.renderWeek();
+      } else {
+        this.renderDay();
+      }
+    },
+
+    renderMonth() {
+      const { currentYear, currentMonth } = state;
       const firstDay = new Date(currentYear, currentMonth, 1).getDay();
       const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
       const daysInPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
@@ -115,7 +170,10 @@
       const today = new Date();
       const todayStr = formatDateISO(today.getFullYear(), today.getMonth(), today.getDate());
 
+      // Show weekday headers
+      document.querySelector('.calendar-weekdays').classList.remove('hidden');
       dom.calendarGrid.innerHTML = '';
+      dom.calendarGrid.className = 'calendar-grid';
 
       const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
 
@@ -127,21 +185,18 @@
         const dayCol = i % 7;
 
         if (i < firstDay) {
-          // Previous month
           day = daysInPrevMonth - firstDay + i + 1;
           month = currentMonth - 1;
           year = currentYear;
           if (month < 0) { month = 11; year--; }
           cell.classList.add('other-month');
         } else if (i - firstDay >= daysInMonth) {
-          // Next month
           day = i - firstDay - daysInMonth + 1;
           month = currentMonth + 1;
           year = currentYear;
           if (month > 11) { month = 0; year++; }
           cell.classList.add('other-month');
         } else {
-          // Current month
           day = i - firstDay + 1;
           month = currentMonth;
           year = currentYear;
@@ -154,25 +209,113 @@
         if (dayCol === 6) cell.classList.add('saturday');
         if (dateStr === todayStr) cell.classList.add('today');
 
-        // Date number
         const dateNum = document.createElement('span');
         dateNum.className = 'date-number';
         dateNum.textContent = day;
         cell.appendChild(dateNum);
 
-        // Schedule pills
         const scheduleContainer = document.createElement('div');
         scheduleContainer.className = 'schedule-list';
         this.renderSchedules(scheduleContainer, dateStr);
         cell.appendChild(scheduleContainer);
 
-        // Click handler
         cell.addEventListener('click', (e) => {
           if (e.target.closest('.schedule-pill') || e.target.closest('.pill-more')) return;
           Modal.openForAdd(dateStr);
         });
 
         dom.calendarGrid.appendChild(cell);
+      }
+    },
+
+    renderWeek() {
+      const today = new Date();
+      const todayStr = formatDateISO(today.getFullYear(), today.getMonth(), today.getDate());
+
+      document.querySelector('.calendar-weekdays').classList.remove('hidden');
+      dom.calendarGrid.innerHTML = '';
+      dom.calendarGrid.className = 'calendar-grid week-view';
+
+      for (let i = 0; i < 7; i++) {
+        const d = addDays(state.currentWeekStart, i);
+        const dateStr = formatDateISO(d.getFullYear(), d.getMonth(), d.getDate());
+
+        const cell = document.createElement('div');
+        cell.className = 'calendar-cell week-cell';
+        cell.dataset.date = dateStr;
+
+        if (i === 0) cell.classList.add('sunday');
+        if (i === 6) cell.classList.add('saturday');
+        if (dateStr === todayStr) cell.classList.add('today');
+
+        const dateNum = document.createElement('span');
+        dateNum.className = 'date-number';
+        dateNum.textContent = d.getDate();
+        cell.appendChild(dateNum);
+
+        const scheduleContainer = document.createElement('div');
+        scheduleContainer.className = 'schedule-list';
+        // 주간뷰에서는 모든 일정 표시
+        const schedules = state.schedules
+          .filter((s) => s.date === dateStr)
+          .sort((a, b) => a.startTime.localeCompare(b.startTime));
+        schedules.forEach((schedule) => {
+          scheduleContainer.appendChild(this.createPill(schedule, true));
+        });
+        cell.appendChild(scheduleContainer);
+
+        cell.addEventListener('click', (e) => {
+          if (e.target.closest('.schedule-pill')) return;
+          Modal.openForAdd(dateStr);
+        });
+
+        dom.calendarGrid.appendChild(cell);
+      }
+    },
+
+    renderDay() {
+      const d = state.currentDay;
+      const dateStr = formatDateISO(d.getFullYear(), d.getMonth(), d.getDate());
+
+      document.querySelector('.calendar-weekdays').classList.add('hidden');
+      dom.calendarGrid.innerHTML = '';
+      dom.calendarGrid.className = 'calendar-grid day-view';
+
+      const schedules = state.schedules
+        .filter((s) => s.date === dateStr)
+        .sort((a, b) => a.startTime.localeCompare(b.startTime));
+
+      if (schedules.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'day-empty';
+        empty.innerHTML = '<p>일정이 없습니다</p><button class="btn btn-save day-add-btn">+ 일정 추가</button>';
+        empty.querySelector('button').addEventListener('click', () => Modal.openForAdd(dateStr));
+        dom.calendarGrid.appendChild(empty);
+      } else {
+        schedules.forEach((schedule) => {
+          const person = state.people[schedule.personId];
+          const row = document.createElement('div');
+          row.className = 'day-row';
+          row.innerHTML = `
+            <div class="day-row-color" style="background:${person.color}"></div>
+            <div class="day-row-content">
+              <div class="day-row-top">
+                <span class="day-row-name">${person.name}</span>
+                ${schedule.personId === TICKET_PERSON_ID ? '<span class="day-row-ticket">🎫</span>' : ''}
+              </div>
+              <div class="day-row-time">${formatTime(schedule.startTime)} ~ ${formatTime(schedule.endTime)}</div>
+              ${schedule.description ? '<div class="day-row-memo">' + schedule.description + '</div>' : ''}
+            </div>
+          `;
+          row.addEventListener('click', () => Modal.openForEdit(schedule.id));
+          dom.calendarGrid.appendChild(row);
+        });
+
+        const addRow = document.createElement('div');
+        addRow.className = 'day-add-row';
+        addRow.innerHTML = '<button class="btn btn-save day-add-btn">+ 일정 추가</button>';
+        addRow.querySelector('button').addEventListener('click', () => Modal.openForAdd(dateStr));
+        dom.calendarGrid.appendChild(addRow);
       }
     },
 
@@ -204,18 +347,19 @@
       }
     },
 
-    createPill(schedule) {
+    createPill(schedule, showName) {
       const pill = document.createElement('div');
       pill.className = `schedule-pill person-${schedule.personId}`;
       pill.dataset.scheduleId = schedule.id;
 
       let html = '';
-      // 기차표(주황) 사람만 자동으로 🎫 아이콘 표시
       if (schedule.personId === TICKET_PERSON_ID) {
         html += '<span class="pill-ticket">🎫</span>';
       }
-      const person = state.people[schedule.personId];
-      html += `<span class="pill-name">${person.name}</span>`;
+      if (showName) {
+        const person = state.people[schedule.personId];
+        html += `<span class="pill-name">${person.name}</span>`;
+      }
       html += `<span class="pill-time">${formatTime(schedule.startTime)}~${formatTime(schedule.endTime)}</span>`;
       if (schedule.description) {
         html += `<span class="pill-memo">${schedule.description}</span>`;
@@ -439,19 +583,25 @@
   function bindEvents() {
     // Navigation
     dom.prevMonth.addEventListener('click', () => {
-      state.currentMonth--;
-      if (state.currentMonth < 0) {
-        state.currentMonth = 11;
-        state.currentYear--;
+      if (state.viewMode === 'month') {
+        state.currentMonth--;
+        if (state.currentMonth < 0) { state.currentMonth = 11; state.currentYear--; }
+      } else if (state.viewMode === 'week') {
+        state.currentWeekStart = addDays(state.currentWeekStart, -7);
+      } else {
+        state.currentDay = addDays(state.currentDay, -1);
       }
       Calendar.render();
     });
 
     dom.nextMonth.addEventListener('click', () => {
-      state.currentMonth++;
-      if (state.currentMonth > 11) {
-        state.currentMonth = 0;
-        state.currentYear++;
+      if (state.viewMode === 'month') {
+        state.currentMonth++;
+        if (state.currentMonth > 11) { state.currentMonth = 0; state.currentYear++; }
+      } else if (state.viewMode === 'week') {
+        state.currentWeekStart = addDays(state.currentWeekStart, 7);
+      } else {
+        state.currentDay = addDays(state.currentDay, 1);
       }
       Calendar.render();
     });
@@ -460,7 +610,24 @@
       const today = new Date();
       state.currentYear = today.getFullYear();
       state.currentMonth = today.getMonth();
+      state.currentWeekStart = getWeekStart(today);
+      state.currentDay = new Date(today);
       Calendar.render();
+    });
+
+    // View mode buttons
+    document.querySelectorAll('.view-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const mode = btn.dataset.view;
+        state.viewMode = mode;
+        if (mode === 'week' && !state.currentWeekStart) {
+          state.currentWeekStart = getWeekStart(new Date());
+        }
+        if (mode === 'day' && !state.currentDay) {
+          state.currentDay = new Date();
+        }
+        Calendar.render();
+      });
     });
 
     // Schedule form submit
@@ -565,6 +732,10 @@
         state.people = saved.people;
       }
     }
+
+    const today = new Date();
+    state.currentWeekStart = getWeekStart(today);
+    state.currentDay = new Date(today);
 
     renderPersonLegend();
     Calendar.render();

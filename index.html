@@ -32,17 +32,22 @@
   <!-- Calendar Navigation -->
   <div class="calendar-nav">
     <button id="btn-today" class="btn-today">오늘</button>
-    <button id="prev-month" class="btn-nav" aria-label="이전 달">
+    <button id="prev-month" class="btn-nav" aria-label="이전">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="15 18 9 12 15 6"/>
       </svg>
     </button>
     <h2 id="current-month" class="month-title">2026년 2월</h2>
-    <button id="next-month" class="btn-nav" aria-label="다음 달">
+    <button id="next-month" class="btn-nav" aria-label="다음">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="9 18 15 12 9 6"/>
       </svg>
     </button>
+    <div class="view-switcher">
+      <button class="view-btn active" data-view="month">월</button>
+      <button class="view-btn" data-view="week">주</button>
+      <button class="view-btn" data-view="day">일</button>
+    </div>
   </div>
 
   <!-- Calendar -->
