@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>기타차고 일정 캘린더</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">4인 기타차고 일정 관리</p>
+        <h1>기타차고 올라간 시간부터 내려오는 시간까지</h1>
+        <p class="subtitle">4명의 일정을 한눈에 확인하고, 내 일정에는 기차표 아이콘을 자동으로 표시합니다.</p>
+      </div>
+      <div class="hero-card">
+        <div class="hero-card__top">
+          <span class="pulse"></span>
+          <span>실시간 반영</span>
+        </div>
+        <div class="hero-card__body">
+          <p>다음 일정</p>
+          <h2>17:30 - 19:10</h2>
+          <p>기타차고 내려오기</p>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="panel">
+        <div class="panel__header">
+          <h2>새 일정 등록</h2>
+          <p>올라간 시간과 내려오는 시간을 입력하고 담당자를 선택하세요.</p>
+        </div>
+        <form class="schedule-form" id="scheduleForm">
+          <div class="form-row">
+            <label>
+              일정 제목
+              <input type="text" name="title" placeholder="예: 기타차고 올라가기" required />
+            </label>
+            <label>
+              담당자
+              <select name="member" required>
+                <option value="민지">민지</option>
+                <option value="도윤">도윤</option>
+                <option value="서연">서연</option>
+                <option value="준호">준호</option>
+              </select>
+            </label>
+          </div>
+          <div class="form-row">
+            <label>
+              올라간 시간
+              <input type="time" name="start" required />
+            </label>
+            <label>
+              내려오는 시간
+              <input type="time" name="end" required />
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" name="isMine" />
+              내 일정 (기차표 아이콘 표시)
+            </label>
+          </div>
+          <button type="submit">일정 추가하기</button>
+        </form>
+      </section>
+
+      <section class="calendar">
+        <div class="calendar__header">
+          <h2>오늘의 일정</h2>
+          <div class="legend">
+            <span class="legend__item"><span class="dot dot--mine"></span>내 일정</span>
+            <span class="legend__item"><span class="dot dot--shared"></span>공유 일정</span>
+          </div>
+        </div>
+        <div class="calendar__grid" id="calendarGrid"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
