@@ -911,10 +911,17 @@ input {
 /* ============ RESPONSIVE ============ */
 
 @media (max-width: 768px) {
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
   .app-header {
-    padding: 10px 16px;
+    padding: 8px 12px;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
   }
 
   .header-right {
@@ -939,28 +946,41 @@ input {
   }
 
   .calendar-container {
-    padding: 8px 8px 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 4px 4px 8px;
   }
 
-  .calendar-nav {
-    padding: 12px 16px 4px;
-    gap: 8px;
-  }
-
-  .month-title {
-    font-size: 1.1rem;
-    min-width: 130px;
+  .calendar-grid {
+    flex: 1;
   }
 
   .calendar-cell {
-    min-height: 72px;
-    padding: 4px;
+    min-height: 0;
+    padding: 3px;
+  }
+
+  .calendar-nav {
+    padding: 8px 12px 4px;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .month-title {
+    font-size: 1rem;
+    min-width: 110px;
+  }
+
+  .view-switcher {
+    margin-left: 0;
   }
 
   .date-number {
-    width: 22px;
-    height: 22px;
-    font-size: 0.72rem;
+    width: 20px;
+    height: 20px;
+    font-size: 0.7rem;
   }
 
   .schedule-pill {
@@ -973,6 +993,10 @@ input {
     font-size: 0.55rem;
   }
 
+  .pill-memo {
+    font-size: 0.5rem;
+  }
+
   .person-selector {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -981,22 +1005,21 @@ input {
     max-width: 100%;
     border-radius: var(--radius-lg);
   }
+
+  .calendar-cell.week-cell {
+    min-height: 0;
+  }
 }
 
 @media (max-width: 480px) {
   .app-title {
-    font-size: 1.05rem;
-  }
-
-  .calendar-cell {
-    min-height: 60px;
-    padding: 3px;
+    font-size: 1rem;
   }
 
   .date-number {
-    width: 20px;
-    height: 20px;
-    font-size: 0.68rem;
+    width: 18px;
+    height: 18px;
+    font-size: 0.65rem;
   }
 
   .schedule-pill {
@@ -1016,5 +1039,10 @@ input {
   .form-row {
     flex-direction: column;
     gap: 12px;
+  }
+
+  .view-btn {
+    padding: 4px 10px;
+    font-size: 0.72rem;
   }
 }
